@@ -1161,6 +1161,39 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@enable3d/ammo-physics@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/ammo-physics/-/ammo-physics-0.24.1.tgz#cfb6f4d83f811b536c34980ca6d1b824e3513ceb"
+  integrity sha512-DypwnWPbhH3Qrd9rSFu+W/V+2w+bgI481/LcRARysYkBA4gsmzIGVLniRl3OGUuOI49n2GlOzf5SxOWHLQ7CqQ==
+  dependencies:
+    "@enable3d/common" "^0.24.1"
+    "@enable3d/three-wrapper" "^0.24.1"
+    "@yandeu/events" "0.0.5"
+
+"@enable3d/common@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/common/-/common-0.24.1.tgz#cd12147f69f08677a0dd91a280d3c5e6cf27ad63"
+  integrity sha512-RawWoaiui+uQDG5+b0kgXH9krmK4OUKa2/qj1vEEAmkV9NnMZRhu2hMc2mNEpcnIAK6NKZSLKsHZ2i5wOUQCDQ==
+  dependencies:
+    "@enable3d/three-wrapper" "^0.24.1"
+    "@yandeu/events" "0.0.5"
+
+"@enable3d/three-graphics@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/three-graphics/-/three-graphics-0.24.1.tgz#b42c90bee61652bf974a8f3cbe359f2d504cfaca"
+  integrity sha512-oiZj0nYWIGhV3wwOusSK2pVtSX6zqBlTd217hkQg1MoWPay9AdMv8kaF3E1ElNmd18cOZN9CwyOHQn8TYc5Z/A==
+  dependencies:
+    "@enable3d/ammo-physics" "^0.24.1"
+    "@enable3d/common" "^0.24.1"
+    "@enable3d/three-wrapper" "^0.24.1"
+    "@yandeu/events" "0.0.5"
+    "@yandeu/tap" "0.0.3"
+
+"@enable3d/three-wrapper@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/three-wrapper/-/three-wrapper-0.24.1.tgz#6a6299cd4772ec54fbfb39e5a8b3e70d0003944e"
+  integrity sha512-15jzS2Yy4/zYJq38kDbc6kk7f1IByk2M2qhSAzaRxoIGL9c1NJ+sWdxJa3mw9WHYz113YqGLF+myIP2SLHc8Ug==
+
 "@eslint/eslintrc@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.3.0.tgz#d736d6963d7003b6514e6324bec9c602ac340318"
@@ -2130,6 +2163,18 @@
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
+
+"@yandeu/events@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@yandeu/events/-/events-0.0.5.tgz#f8fb41cf4222186eca6a0a5d36f5393805484f19"
+  integrity sha512-TUkghSGu0ThcEyAP50WHU/vdQkpt9EZyotjZzG8KirR+VI5o7Rp5wabcGru62JNy+awMR8Voy+kFzhNkC/1E6A==
+
+"@yandeu/tap@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@yandeu/tap/-/tap-0.0.3.tgz#36109cb23a02a4808407fb7f9811fcb6cfec8521"
+  integrity sha512-GIStEHmboHVbs6ghcRxkO5NVdZtRCsf1mkKI0gvzc21uj5qGlGSCD/Eaax98/c6Mu9+n2lkTYbTwuBbg2vzuQw==
+  dependencies:
+    "@yandeu/events" "0.0.5"
 
 abab@^2.0.3:
   version "2.0.5"
@@ -4300,6 +4345,16 @@ emojis-list@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz#5570662046ad29e2e916e71aae260abdff4f6a78"
   integrity sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==
+
+enable3d@^0.24.1:
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/enable3d/-/enable3d-0.24.1.tgz#224a6c8659dae83a2b1d4a757ec40866e6ba235f"
+  integrity sha512-oaITTM39GqG0hxyejSzvi/eZnzWfUfPKE5jX/VfzzeGANkN/sJmlvpSvG+Y8FKiND8xTxjuEaxERyoJr+o90ag==
+  dependencies:
+    "@enable3d/ammo-physics" "^0.24.1"
+    "@enable3d/common" "^0.24.1"
+    "@enable3d/three-graphics" "^0.24.1"
+    "@enable3d/three-wrapper" "^0.24.1"
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -7309,6 +7364,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+matter-js@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/matter-js/-/matter-js-0.18.0.tgz#083ced04eb6768f7664dc7ca8948a10e46ad3ed6"
+  integrity sha512-/ZVem4WygUnbmo/iE4oHZpZS97btfBtYy5Iwn1396vUZU7YhgVEN8J4UWwfZwY1ZqoTYlPgjvSw9WXauuXL0mg==
 
 md5.js@^1.3.4:
   version "1.3.5"
