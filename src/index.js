@@ -4,6 +4,10 @@ import { PhysicsLoader } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics'
 import './styles.css'
 
+const BOX_SIZE = 0.1
+
+const getCameraFactor = () => (5 * BOX_SIZE) / window.innerHeight
+
 const setup = () => {
   const scene = new Three.Scene()
 
@@ -14,11 +18,13 @@ const setup = () => {
     1000
   )
 
+  const cameraFactor = getCameraFactor()
+
   const orthoCamera = new Three.OrthographicCamera(
-    -window.innerWidth / 2,
-    window.innerWidth / 2,
-    window.innerHeight / 2,
-    -window.innerHeight / 2,
+    -window.innerWidth * cameraFactor,
+    window.innerWidth * cameraFactor,
+    window.innerHeight * cameraFactor,
+    -window.innerHeight * cameraFactor,
     -10000,
     10000
   )
@@ -39,11 +45,13 @@ const setup = () => {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
 
+    const cameraFactor = getCameraFactor()
+
     // Update orthographic camera
-    orthoCamera.left = -window.innerWidth
-    orthoCamera.right = window.innerWidth
-    orthoCamera.top = window.innerHeight
-    orthoCamera.bottom = -window.innerHeight
+    orthoCamera.left = -window.innerWidth * cameraFactor
+    orthoCamera.right = window.innerWidth * cameraFactor
+    orthoCamera.top = window.innerHeight * cameraFactor
+    orthoCamera.bottom = -window.innerHeight * cameraFactor
     orthoCamera.updateProjectionMatrix()
   }
 
@@ -55,7 +63,7 @@ const setup = () => {
   el.appendChild(renderer.domElement)
 
   // Setup Geometry
-  const geometry = new Three.BoxGeometry(100, 100, 100)
+  const geometry = new Three.BoxGeometry(BOX_SIZE, BOX_SIZE, BOX_SIZE)
 
   const material = new Three.MeshLambertMaterial({
     color: '#fff',
@@ -65,7 +73,7 @@ const setup = () => {
   const cube = new Three.Mesh(geometry, material)
   cube.castShadow = true
   cube.rotation.y = Math.PI / 4
-  cube.position.y = 150
+  cube.position.y = 2 * BOX_SIZE
 
   scene.add(cube)
 
@@ -73,36 +81,22 @@ const setup = () => {
   const lineMaterial = new Three.LineBasicMaterial({ color: '#fff' })
 
   const points = [
-    new Three.Vector3(-200, 0, 0),
-    new Three.Vector3(0, 200, 0),
-    new Three.Vector3(200, 0, 0),
+    new Three.Vector3(-2 * BOX_SIZE, 0, 0),
+    new Three.Vector3(0, 2 * BOX_SIZE, 0),
+    new Three.Vector3(2 * BOX_SIZE, 0, 0),
   ]
 
   const lineGeo = new Three.BufferGeometry().setFromPoints(points)
 
   const line = new Three.Line(lineGeo, lineMaterial)
-  line.position.y = 150
+  line.position.y = 1.5 * BOX_SIZE
   scene.add(line)
-
-  // Add plane
-  const planeGeo = new Three.PlaneGeometry(10000, 10000)
-
-  const planeMaterial = new Three.MeshLambertMaterial({
-    color: '#ccc',
-    side: Three.DoubleSide,
-  })
-
-  const plane = new Three.Mesh(planeGeo, planeMaterial)
-  plane.rotation.x = Math.PI / 2
-  plane.receiveShadow = true
-
-  scene.add(plane)
 
   // Add light
   const light = new Three.PointLight('#7df', 1, 100000)
   scene.add(light)
 
-  light.position.set(200, 500, 600)
+  light.position.set(10 * BOX_SIZE, 20 * BOX_SIZE, 30 * BOX_SIZE)
   light.castShadow = true
 
   // Light Shadow
@@ -113,10 +107,10 @@ const setup = () => {
   scene.add(ambientLight)
 
   // Set camera position
-  camera.position.z = 500
-  orthoCamera.position.z = 500
-  orthoCamera.position.y = window.innerHeight / 2
-  orthoCamera.rotation.x = -Math.PI / 6
+  camera.position.z = 5 * BOX_SIZE
+  orthoCamera.position.z = 10 * BOX_SIZE
+  orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
+  //orthoCamera.rotation.x = -Math.PI / 100
 
   // const baseRotation = new Three.Matrix4().makeRotationX(-Math.PI / 6)
 
@@ -126,11 +120,20 @@ const setup = () => {
 
   const physics = new AmmoPhysics(scene)
   physics.debug.enable(true)
-  physics.add.ground({ width: 1000, height: 1000 })
+
+  const ground = physics.add.ground({
+    width: 10 * BOX_SIZE,
+    height: 10 * BOX_SIZE,
+    depth: 0.1 * BOX_SIZE,
+  })
+
+  ground.body.setCollisionFlags(1)
+
+  window.ground = ground
 
   physics.add.existing(cube)
   cube.body.setCollisionFlags(0)
-  cube.body.bounciness = 0.7
+  cube.body.bounciness = 0
 
   const controls = new OrbitControls(orthoCamera, renderer.domElement)
   controls.update()
