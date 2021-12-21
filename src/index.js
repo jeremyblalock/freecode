@@ -4,7 +4,7 @@ import { PhysicsLoader } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics'
 import './styles.css'
 
-const BOX_SIZE = 0.1
+const BOX_SIZE = 1
 
 const getCameraFactor = () => (5 * BOX_SIZE) / window.innerHeight
 
@@ -28,8 +28,6 @@ const setup = () => {
     -10000,
     10000
   )
-
-  // orthoCamera.matrixAutoUpdate = false
 
   const renderer = new Three.WebGLRenderer({ antialias: true })
   renderer.setPixelRatio(window.devicePixelRatio)
@@ -100,8 +98,8 @@ const setup = () => {
   light.castShadow = true
 
   // Light Shadow
-  light.shadow.mapSize.width = 512
-  light.shadow.mapSize.height = 512
+  light.shadow.mapSize.width = 10000
+  light.shadow.mapSize.height = 10000
 
   const ambientLight = new Three.AmbientLight('#865')
   scene.add(ambientLight)
@@ -110,13 +108,6 @@ const setup = () => {
   camera.position.z = 5 * BOX_SIZE
   orthoCamera.position.z = 10 * BOX_SIZE
   orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
-  //orthoCamera.rotation.x = -Math.PI / 100
-
-  // const baseRotation = new Three.Matrix4().makeRotationX(-Math.PI / 6)
-
-  // const baseMatrix = baseRotation.multiply(
-  //   new Three.Matrix4().makeTranslation(0, 50, 300)
-  // )
 
   const physics = new AmmoPhysics(scene)
   physics.debug.enable(true)
@@ -129,7 +120,20 @@ const setup = () => {
 
   ground.body.setCollisionFlags(1)
 
-  window.ground = ground
+  //const planeGeo = new Three.PlaneGeometry(100 * BOX_SIZE, 100 * BOX_SIZE)
+
+  //const planeMaterial = new Three.MeshStandardMaterial({
+  //  color: '#ccc',
+  //  side: Three.DoubleSide,
+  //})
+
+  //const plane = new Three.Mesh(planeGeo, planeMaterial)
+  //plane.receiveShadow = true
+  //plane.rotation.x = Math.PI / 2
+
+  //scene.add(plane)
+  //physics.add.existing(plane)
+  //plane.body.setCollisionFlags(2)
 
   physics.add.existing(cube)
   cube.body.setCollisionFlags(0)
@@ -147,12 +151,6 @@ const setup = () => {
     cube.rotation.y = rotation
     cube.body.needUpdate = true
 
-    // const rotationMatrix = new Three.Matrix4().makeRotationY(rotation)
-    // const matrix = rotationMatrix.multiply(baseMatrix)
-
-    // orthoCamera.matrixWorld = matrix
-    // camera.updateMatrixWorld(true)
-
     // Update physics
     physics.update(clock.getDelta() * 1000)
     physics.updateDebugger()
@@ -165,7 +163,4 @@ const setup = () => {
   loop()
 }
 
-PhysicsLoader('/static/js', (...args) => {
-  console.log('GOT ARGS:', args)
-  setup()
-})
+PhysicsLoader('/static/js', () => setup())
