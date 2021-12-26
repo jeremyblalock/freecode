@@ -114,6 +114,10 @@ const setup = () => {
 
   // Orbit controls
   const controls = new OrbitControls(orthoCamera, renderer.domElement)
+  controls.minZoom = 0.5
+  controls.maxZoom = 2
+  controls.minPolarAngle = Math.PI / 16
+  controls.maxPolarAngle = Math.PI * (7 / 16)
   controls.update()
 
   const clock = new Three.Clock()
