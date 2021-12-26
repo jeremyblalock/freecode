@@ -2,6 +2,7 @@ import * as Three from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { PhysicsLoader } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics'
+import Arm from './arm'
 import './styles.css'
 
 const BOX_SIZE = 1
@@ -10,6 +11,7 @@ const getCameraFactor = () => (5 * BOX_SIZE) / window.innerHeight
 
 const setup = () => {
   const scene = new Three.Scene()
+  scene.background = new Three.Color('#a99')
 
   const camera = new Three.PerspectiveCamera(
     75,
@@ -60,38 +62,8 @@ const setup = () => {
   const el = document.getElementById('root')
   el.appendChild(renderer.domElement)
 
-  // Setup Geometry
-  const geometry = new Three.BoxGeometry(BOX_SIZE, BOX_SIZE, BOX_SIZE)
-
-  const material = new Three.MeshLambertMaterial({
-    color: '#fff',
-    side: Three.DoubleSide,
-  })
-
-  const cube = new Three.Mesh(geometry, material)
-  cube.castShadow = true
-  cube.rotation.y = Math.PI / 4
-  cube.position.y = 2 * BOX_SIZE
-
-  scene.add(cube)
-
-  // Add Line
-  const lineMaterial = new Three.LineBasicMaterial({ color: '#fff' })
-
-  const points = [
-    new Three.Vector3(-2 * BOX_SIZE, 0, 0),
-    new Three.Vector3(0, 2 * BOX_SIZE, 0),
-    new Three.Vector3(2 * BOX_SIZE, 0, 0),
-  ]
-
-  const lineGeo = new Three.BufferGeometry().setFromPoints(points)
-
-  const line = new Three.Line(lineGeo, lineMaterial)
-  line.position.y = 1.5 * BOX_SIZE
-  scene.add(line)
-
   // Add light
-  const light = new Three.PointLight('#7df', 1, 100000)
+  const light = new Three.DirectionalLight('#fff', 0.5)
   scene.add(light)
 
   light.position.set(10 * BOX_SIZE, 20 * BOX_SIZE, 30 * BOX_SIZE)
@@ -101,7 +73,7 @@ const setup = () => {
   light.shadow.mapSize.width = 10000
   light.shadow.mapSize.height = 10000
 
-  const ambientLight = new Three.AmbientLight('#865')
+  const ambientLight = new Three.AmbientLight('#fff', 1)
   scene.add(ambientLight)
 
   // Set camera position
@@ -110,7 +82,11 @@ const setup = () => {
   orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
 
   const physics = new AmmoPhysics(scene)
-  physics.debug.enable(true)
+  //physics.debug.enable(true)
+
+  // Setup Geometry
+  const arm = new Arm(BOX_SIZE)
+  arm.addToScene(scene, physics)
 
   const ground = physics.add.ground({
     width: 10 * BOX_SIZE,
@@ -119,40 +95,37 @@ const setup = () => {
   })
 
   ground.body.setCollisionFlags(1)
+  ground.visible = false
 
-  //const planeGeo = new Three.PlaneGeometry(100 * BOX_SIZE, 100 * BOX_SIZE)
+  // Add plane (for shadows)
+  const planeGeo = new Three.PlaneGeometry(100 * BOX_SIZE, 100 * BOX_SIZE)
 
-  //const planeMaterial = new Three.MeshStandardMaterial({
-  //  color: '#ccc',
-  //  side: Three.DoubleSide,
-  //})
+  const planeMaterial = new Three.ShadowMaterial({
+    side: Three.DoubleSide,
+    opacity: 0.1,
+  })
 
-  //const plane = new Three.Mesh(planeGeo, planeMaterial)
-  //plane.receiveShadow = true
-  //plane.rotation.x = Math.PI / 2
+  const plane = new Three.Mesh(planeGeo, planeMaterial)
+  plane.rotation.x = Math.PI / 2
+  plane.receiveShadow = true
+  plane.position.y = 0.05 * BOX_SIZE
 
-  //scene.add(plane)
-  //physics.add.existing(plane)
-  //plane.body.setCollisionFlags(2)
+  scene.add(plane)
 
-  physics.add.existing(cube)
-  cube.body.setCollisionFlags(0)
-  cube.body.bounciness = 0
-
+  // Orbit controls
   const controls = new OrbitControls(orthoCamera, renderer.domElement)
   controls.update()
 
-  let rotation = 0
   const clock = new Three.Clock()
 
   const loop = () => {
+    const delta = clock.getDelta()
+
     // Animate
-    rotation += 0.01
-    cube.rotation.y = rotation
-    cube.body.needUpdate = true
+    arm.loop(delta)
 
     // Update physics
-    physics.update(clock.getDelta() * 1000)
+    physics.update(delta * 1000)
     physics.updateDebugger()
 
     // Re-render
