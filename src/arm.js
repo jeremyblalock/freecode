@@ -10,19 +10,30 @@ export default class Arm {
   setupShapes = () => {
     const size = this._size
 
-    const geometry = new Three.BoxGeometry(size, size, size)
-
     const material = new Three.MeshLambertMaterial({
       color: '#aaa',
       side: Three.DoubleSide,
     })
 
-    const cube = new Three.Mesh(geometry, material)
-    cube.castShadow = true
-    cube.rotation.y = Math.PI / 4
-    cube.position.y = 2 * size
+    const geom = new Three.BoxGeometry(size * 0.25, size, size * 0.25)
+    const geom2 = new Three.BoxGeometry(size * 0.25, size, size * 0.25)
 
-    this._shape = cube
+    const cube = new Three.Mesh(geom, material)
+    cube.castShadow = true
+
+    const cube2 = new Three.Mesh(geom2, material)
+    cube2.position.y = 1.1 * size
+    cube2.position.x = (-0.5 * size) / Math.sqrt(2)
+    cube2.rotation.z = Math.PI * 0.25
+    cube2.castShadow = true
+
+    const group = new Three.Group()
+    group.add(cube)
+    group.add(cube2)
+
+    group.position.y = 2 * size
+
+    this._shape = group
   }
 
   addToScene(scene, physics) {

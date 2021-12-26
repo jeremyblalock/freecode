@@ -82,7 +82,7 @@ const setup = () => {
   orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
 
   const physics = new AmmoPhysics(scene)
-  //physics.debug.enable(true)
+  physics.debug.enable(true)
 
   // Setup Geometry
   const arm = new Arm(BOX_SIZE)
