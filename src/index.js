@@ -3,6 +3,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { PhysicsLoader } from 'enable3d'
 import { AmmoPhysics } from '@enable3d/ammo-physics'
 import Arm from './arm'
+import store from './redux-store'
+import { initializeReact } from './react'
+import { getControlValues } from './utils/redux'
 import './styles.css'
 
 const BOX_SIZE = 1
@@ -61,6 +64,11 @@ const setup = () => {
 
   const el = document.getElementById('root')
   el.appendChild(renderer.domElement)
+
+  // Setup react
+  const reactRoot = document.createElement('div')
+  el.appendChild(reactRoot)
+  initializeReact(reactRoot)
 
   // Add light
   const light = new Three.DirectionalLight('#fff', 0.5)
@@ -126,6 +134,7 @@ const setup = () => {
     const delta = clock.getDelta()
 
     // Animate
+    arm.setPosition(getControlValues(store.getState()))
     arm.loop(delta)
 
     // Update physics
