@@ -9,6 +9,18 @@ const ControlsForm = function ControlsForm() {
   return (
     <div>
       <Field
+        name="controls.baseRotation"
+        component={Slider}
+        min={0}
+        max={360}
+      />
+      <Field
+        name="controls.shoulderRotation"
+        component={Slider}
+        min={0}
+        max={130}
+      />
+      <Field
         name="controls.elbowRotation"
         component={Slider}
         min={0}
