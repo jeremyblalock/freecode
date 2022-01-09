@@ -18,13 +18,13 @@ const ControlsForm = function ControlsForm() {
         name="controls.shoulderRotation"
         component={Slider}
         min={0}
-        max={130}
+        max={95}
       />
       <Field
         name="controls.elbowRotation"
         component={Slider}
         min={0}
-        max={130}
+        max={120}
       />
     </div>
   )
