@@ -6,6 +6,7 @@ import Arm from './arm'
 import store from './redux-store'
 import { initializeReact } from './react'
 import { getControlValues } from './utils/redux'
+import { addBalls } from './balls'
 import './styles.css'
 
 const BOX_SIZE = 1
@@ -90,7 +91,7 @@ const setup = () => {
   orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
 
   const physics = new AmmoPhysics(scene)
-  physics.debug.enable(true)
+  //physics.debug.enable(true)
 
   // Setup Geometry
   const arm = new Arm(BOX_SIZE)
@@ -119,6 +120,16 @@ const setup = () => {
   plane.position.y = 0.05 * BOX_SIZE
 
   scene.add(plane)
+
+  // Add random balls
+  addBalls({
+    scene,
+    physics,
+    count: 4,
+    size: BOX_SIZE / 4,
+    minRadius: BOX_SIZE,
+    maxRadius: 3 * BOX_SIZE,
+  })
 
   // Orbit controls
   const controls = new OrbitControls(orthoCamera, renderer.domElement)

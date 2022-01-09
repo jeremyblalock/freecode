@@ -1,17 +1,17 @@
 import * as Three from 'three'
 
-// Collision flags
-const KINEMATIC = 2
+import { DEGREES } from './utils/geometry'
 
-const DEGREES = Math.PI / 180
-
-const BASE_RADIUS = 0.7
-const BASE_HEIGHT = 0.3
-
-const FIRST_SEGMENT_LENGTH = 1.5
-const SECOND_SEGMENT_LENGTH = 1.5
-
-const JOINT_SIZE = 0.5
+import {
+  KINEMATIC,
+  BASE_RADIUS,
+  BASE_HEIGHT,
+  FIRST_SEGMENT_LENGTH,
+  SECOND_SEGMENT_LENGTH,
+  JOINT_SIZE,
+  SHOULDER_HEIGHT,
+  BALL_RADIUS,
+} from './utils/kinematics'
 
 export default class Arm {
   constructor(size) {
@@ -27,8 +27,8 @@ export default class Arm {
       side: Three.DoubleSide,
     })
 
-    const baseJoint = this.createJoint(size, material)
-    baseJoint.position.y = (BASE_HEIGHT * 1.5 + JOINT_SIZE / 2) * size
+    const shoulder = this.createJoint(size, material)
+    shoulder.position.y = (SHOULDER_HEIGHT - BASE_HEIGHT / 2) * size
 
     const cylinderGeom = new Three.CylinderGeometry(
       BASE_RADIUS * size,
@@ -51,9 +51,9 @@ export default class Arm {
 
     const base = new Three.Group()
     base.add(cylinder)
-    base.add(baseJoint)
+    base.add(shoulder)
     base.add(support)
-    base.position.y = (0.05 + BASE_HEIGHT / 2) * size
+    base.position.y = (BASE_HEIGHT / 2) * size
 
     const geom = new Three.BoxGeometry(
       size * 0.25,
@@ -72,12 +72,12 @@ export default class Arm {
     cube.castShadow = true
 
     const cube2 = new Three.Mesh(geom2, material)
-    cube2.position.y = (0.05 + 0.5 * SECOND_SEGMENT_LENGTH) * size
+    cube2.position.y = 0.5 * SECOND_SEGMENT_LENGTH * size
     cube2.castShadow = true
 
-    const ballGeom = new Three.SphereGeometry(0.4 * size, 16, 8)
+    const ballGeom = new Three.SphereGeometry(BALL_RADIUS * size, 16, 8)
     const ball = new Three.Mesh(ballGeom, material)
-    ball.position.y = (0.05 + SECOND_SEGMENT_LENGTH) * size
+    ball.position.y = SECOND_SEGMENT_LENGTH * size
     ball.castShadow = true
 
     const elbow = this.createJoint(size, material)
@@ -86,15 +86,16 @@ export default class Arm {
     cube2Wrapper.add(cube2)
     cube2Wrapper.add(elbow)
     cube2Wrapper.add(ball)
-    cube2Wrapper.position.y = (0.05 + FIRST_SEGMENT_LENGTH) * size
+    cube2Wrapper.position.y = FIRST_SEGMENT_LENGTH * size
 
     const group = new Three.Group()
     group.add(cube)
     group.add(cube2Wrapper)
 
-    group.position.y = (0.05 + BASE_HEIGHT * 2 + JOINT_SIZE / 2) * size
+    group.position.y = SHOULDER_HEIGHT * size
 
     const wrapper = new Three.Group()
+    wrapper.position.y = 0.05 * size
     wrapper.add(base)
     wrapper.add(group)
 

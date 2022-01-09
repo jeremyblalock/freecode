@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styles from './Slider.module.css'
 
-export default function Slider({ input, min, max, step = 1 }) {
+export default function Slider({ input, label, min, max, step = 1 }) {
   const { value, onChange } = input
 
   const handleChange = useCallback(e => {
@@ -10,6 +10,7 @@ export default function Slider({ input, min, max, step = 1 }) {
 
   return (
     <div className={styles.wrapper}>
+      {label && <span className={styles.label}>{label}</span>}
       <input
         type="range"
         className={styles.slider}
