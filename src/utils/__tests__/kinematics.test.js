@@ -28,59 +28,79 @@ describe('getRotations', () => {
     expect(rotations).toEqual(DEFAULT_POSITION)
   })
 
-  test('horizontal', () => {
-    const position = {
-      x: FIRST_SEGMENT_LENGTH + SECOND_SEGMENT_LENGTH,
-      y: OFFSET,
-      z: 0,
-    }
+  describe('horizontal', () => {
+    test('horizontal', () => {
+      const position = {
+        x: FIRST_SEGMENT_LENGTH + SECOND_SEGMENT_LENGTH,
+        y: OFFSET,
+        z: 0,
+      }
 
-    expect(getRotations(position)).toEqual({
-      shoulderRotation: 90,
-      elbowRotation: 0,
-      baseRotation: 0,
+      expect(getRotations(position)).toEqual({
+        shoulderRotation: 90,
+        elbowRotation: 0,
+        baseRotation: 0,
+      })
+    })
+
+    test('horizontal z-direction', () => {
+      const position = {
+        x: 0,
+        y: OFFSET,
+        z: FIRST_SEGMENT_LENGTH + SECOND_SEGMENT_LENGTH,
+      }
+
+      expect(getRotations(position)).toEqual({
+        shoulderRotation: 90,
+        elbowRotation: 0,
+        baseRotation: 90,
+      })
+    })
+
+    test('horizontal negative', () => {
+      const position = {
+        x: -FIRST_SEGMENT_LENGTH - SECOND_SEGMENT_LENGTH,
+        y: OFFSET,
+        z: 0,
+      }
+
+      expect(getRotations(position)).toEqual({
+        shoulderRotation: 90,
+        elbowRotation: 0,
+        baseRotation: 180,
+      })
+    })
+
+    test('horizontal z-direction negative', () => {
+      const position = {
+        x: 0,
+        y: OFFSET,
+        z: -FIRST_SEGMENT_LENGTH - SECOND_SEGMENT_LENGTH,
+      }
+
+      expect(getRotations(position)).toEqual({
+        shoulderRotation: 90,
+        elbowRotation: 0,
+        baseRotation: 270,
+      })
     })
   })
 
-  test('horizontal z-direction', () => {
-    const position = {
-      x: 0,
-      y: OFFSET,
-      z: FIRST_SEGMENT_LENGTH + SECOND_SEGMENT_LENGTH,
-    }
+  describe('touching ground', () => {
+    test('x-direction', () => {
+      const position = {
+        x: FIRST_SEGMENT_LENGTH * 1.2,
+        y: 0,
+        z: 0,
+      }
 
-    expect(getRotations(position)).toEqual({
-      shoulderRotation: 90,
-      elbowRotation: 0,
-      baseRotation: 90,
-    })
-  })
+      const result = getRotations(position)
 
-  test('horizontal negative', () => {
-    const position = {
-      x: -FIRST_SEGMENT_LENGTH - SECOND_SEGMENT_LENGTH,
-      y: OFFSET,
-      z: 0,
-    }
+      console.log('RESULT:', result)
 
-    expect(getRotations(position)).toEqual({
-      shoulderRotation: 90,
-      elbowRotation: 0,
-      baseRotation: 180,
-    })
-  })
-
-  test('horizontal z-direction negative', () => {
-    const position = {
-      x: 0,
-      y: OFFSET,
-      z: -FIRST_SEGMENT_LENGTH - SECOND_SEGMENT_LENGTH,
-    }
-
-    expect(getRotations(position)).toEqual({
-      shoulderRotation: 90,
-      elbowRotation: 0,
-      baseRotation: 270,
+      expect(result.baseRotation).toBe(0)
+      expect(result.elbowRotation > 20).toBe(true)
+      expect(result.shoulderRotation > 20).toBe(true)
     })
   })
 })

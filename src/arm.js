@@ -146,7 +146,7 @@ export default class Arm {
     const { cube2, group, wrapper } = this._hierarchicalShapes
     const { elbowRotation, shoulderRotation, baseRotation } = position
     const normalizedElbow = Math.min(130, Math.max(0, elbowRotation))
-    const normalizedShoulder = Math.min(95, Math.max(0, shoulderRotation))
+    const normalizedShoulder = Math.min(95, Math.max(-50, shoulderRotation))
 
     cube2.rotation.set(0, 0, normalizedElbow * DEGREES)
     wrapper.rotation.set(0, baseRotation * DEGREES, 0)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { reduxForm, Field, formValueSelector, change } from 'redux-form'
@@ -23,17 +23,39 @@ const normalize = (value, prevValue, allValues) => {
   return value
 }
 
+const CartItem = function CartItem({ coord, value, onChange }) {
+  const handleChange = value => {
+    onChange(coord, value)
+  }
+
+  return (
+    <Slider
+      label={coord.toUpperCase()}
+      input={{ value, onChange: handleChange }}
+      min={-3.45}
+      max={3.45}
+      step={0.01}
+    />
+  )
+}
+
 const Cartesian = function Cartesian() {
   const dispatch = useDispatch()
   const selector = formValueSelector(CONTROLS_FORM)
   const angular = useSelector(state => selector(state, 'controls'))
   const cartesian = getPosition(angular)
 
-  const handleChange = key => value => {
+  const handleChange = (key, value) => {
     const newCoords = { ...cartesian, [key]: value }
     const controls = getRotations(newCoords)
 
-    console.log('CONTROLS:', controls)
+    for (const value of Object.values(controls)) {
+      if (Number.isNaN(value)) {
+        console.log('>>>>>', controls, cartesian)
+
+        return
+      }
+    }
 
     dispatch(change(CONTROLS_FORM, 'controls', controls))
   }
@@ -41,27 +63,9 @@ const Cartesian = function Cartesian() {
   return (
     <div>
       <h2>Cartesian</h2>
-      <Slider
-        label="X"
-        input={{ onChange: handleChange('x'), value: cartesian.x }}
-        min={-4}
-        max={4}
-        step={0.01}
-      />
-      <Slider
-        label="Y"
-        input={{ onChange: handleChange('y'), value: cartesian.y }}
-        min={0}
-        max={3.5}
-        step={0.01}
-      />
-      <Slider
-        label="Z"
-        input={{ onChange: handleChange('z'), value: cartesian.z }}
-        min={-4}
-        max={4}
-        step={0.01}
-      />
+      <CartItem coord="x" onChange={handleChange} value={cartesian.x} />
+      <CartItem coord="y" onChange={handleChange} value={cartesian.y} />
+      <CartItem coord="z" onChange={handleChange} value={cartesian.z} />
     </div>
   )
 }
@@ -81,7 +85,7 @@ const ControlsForm = function ControlsForm() {
       <Field
         name="controls.shoulderRotation"
         component={Slider}
-        min={0}
+        min={-50}
         max={95}
         label="B"
         normalize={normalize}

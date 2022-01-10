@@ -1,12 +1,10 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import styles from './Slider.module.css'
 
 export default function Slider({ input, label, min, max, step = 1 }) {
   const { value, onChange } = input
 
-  const handleChange = useCallback(e => {
-    onChange(e.currentTarget.value)
-  }, [])
+  const handleChange = e => onChange(e.currentTarget.value)
 
   return (
     <div className={styles.wrapper}>
