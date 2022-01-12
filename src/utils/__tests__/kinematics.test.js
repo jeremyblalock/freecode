@@ -10,6 +10,7 @@ import {
 } from '../kinematics'
 
 const OFFSET = SHOULDER_HEIGHT - BALL_RADIUS
+const ARM_LENGTH = FIRST_SEGMENT_LENGTH + SECOND_SEGMENT_LENGTH
 
 describe('lawOfCosines', () => {
   test('equilateral', () => {
@@ -18,6 +19,22 @@ describe('lawOfCosines', () => {
 
   test('straight', () => {
     expect(lawOfCosines(2, 1, 1).toFixed(2)).toEqual('0.00')
+  })
+})
+
+describe('getPosition', () => {
+  test('horizontal in -x direction', () => {
+    const rotations = {
+      ...DEFAULT_POSITION,
+      shoulderRotation: 90,
+      baseRotation: 180,
+    }
+
+    const { x, y, z } = getPosition(rotations)
+
+    expect(x.toFixed(2)).toEqual((-ARM_LENGTH).toFixed(2))
+    expect(y.toFixed(2)).toEqual(OFFSET.toFixed(2))
+    expect(z.toFixed(2)).toEqual('0.00')
   })
 })
 
@@ -86,6 +103,22 @@ describe('getRotations', () => {
     })
   })
 
+  describe('elbow', () => {
+    test('bending elbow in +z', () => {
+      const position = {
+        x: 0,
+        y: OFFSET + FIRST_SEGMENT_LENGTH,
+        z: SECOND_SEGMENT_LENGTH,
+      }
+
+      const result = getRotations(position)
+
+      expect(+result.baseRotation.toFixed(2)).toEqual(90)
+      expect(+result.elbowRotation.toFixed(2)).toEqual(90)
+      expect(Math.abs(+result.shoulderRotation.toFixed(2))).toEqual(0)
+    })
+  })
+
   describe('touching ground', () => {
     test('x-direction', () => {
       const position = {
@@ -95,8 +128,6 @@ describe('getRotations', () => {
       }
 
       const result = getRotations(position)
-
-      console.log('RESULT:', result)
 
       expect(result.baseRotation).toBe(0)
       expect(result.elbowRotation > 20).toBe(true)

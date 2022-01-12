@@ -32,7 +32,7 @@ const CartItem = function CartItem({ coord, value, onChange }) {
     <Slider
       label={coord.toUpperCase()}
       input={{ value, onChange: handleChange }}
-      min={-3.45}
+      min={coord === 'y' ? 0 : -3.45}
       max={3.45}
       step={0.01}
     />

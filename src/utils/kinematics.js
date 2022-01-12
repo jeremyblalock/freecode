@@ -12,8 +12,8 @@ export const KINEMATIC = 2
 export const BASE_RADIUS = 0.7
 export const BASE_HEIGHT = 0.3
 
-export const FIRST_SEGMENT_LENGTH = 1.5
-export const SECOND_SEGMENT_LENGTH = 1.5
+export const FIRST_SEGMENT_LENGTH = 2
+export const SECOND_SEGMENT_LENGTH = 2
 
 export const JOINT_SIZE = 0.5
 
@@ -42,7 +42,7 @@ export const getPosition = rotation => {
     Math.sin((shoulderRotation + elbowRotation) * DEGREES) *
       SECOND_SEGMENT_LENGTH
 
-  const [x, z] = toCart(baseRotation, r)
+  const [x, z] = toCart(baseRotation * DEGREES, r)
 
   return { x, y, z }
 }
@@ -71,7 +71,7 @@ export const getRotations = position => {
     SECOND_SEGMENT_LENGTH
   )
 
-  const pointAngle = 90 - Math.atan2(y, Math.sqrt(x ** 2, z ** 2)) / DEGREES
+  const pointAngle = 90 - Math.atan2(y, Math.sqrt(x ** 2 + z ** 2)) / DEGREES
 
   const shoulderRotation = pointAngle - shoulderPointAngle
 
