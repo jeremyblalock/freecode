@@ -12,14 +12,39 @@ export const KINEMATIC = 2
 export const BASE_RADIUS = 0.7
 export const BASE_HEIGHT = 0.3
 
-export const FIRST_SEGMENT_LENGTH = 2
-export const SECOND_SEGMENT_LENGTH = 2
+export const FIRST_SEGMENT_LENGTH = 1.5
+export const SECOND_SEGMENT_LENGTH = 1.5
 
 export const JOINT_SIZE = 0.5
 
 export const SHOULDER_HEIGHT = BASE_HEIGHT * 2 + JOINT_SIZE / 2
 
 export const BALL_RADIUS = 0.4
+
+export const MIN_SHOULDER_ROTATION = -45
+export const MAX_SHOULDER_ROTATION = 95
+export const MIN_ELBOW_ROTATION = 0
+export const MAX_ELBOW_ROTATION = 120
+
+export const isValid = state => {
+  const { shoulderRotation, elbowRotation } = state
+
+  if (
+    shoulderRotation < MIN_SHOULDER_ROTATION ||
+    shoulderRotation > MAX_SHOULDER_ROTATION
+  ) {
+    return false
+  }
+
+  if (
+    elbowRotation < MIN_ELBOW_ROTATION ||
+    elbowRotation > MAX_ELBOW_ROTATION
+  ) {
+    return false
+  }
+
+  return true
+}
 
 // Conversions
 

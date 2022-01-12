@@ -1,12 +1,17 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { reduxForm, Field, formValueSelector, change } from 'redux-form'
 
 import {
   DEFAULT_POSITION,
+  MIN_SHOULDER_ROTATION,
+  MAX_SHOULDER_ROTATION,
+  MIN_ELBOW_ROTATION,
+  MAX_ELBOW_ROTATION,
   getPosition,
   getRotations,
+  isValid,
 } from '../../utils/kinematics'
 
 import { CONTROLS_FORM } from '../../utils/redux'
@@ -16,7 +21,7 @@ import styles from './Controls.module.css'
 const normalize = (value, prevValue, allValues) => {
   const { y } = getPosition(allValues.controls)
 
-  if (y < 0) {
+  if (y < 0 || !isValid(allValues)) {
     return prevValue
   }
 
@@ -48,6 +53,10 @@ const Cartesian = function Cartesian() {
   const handleChange = (key, value) => {
     const newCoords = { ...cartesian, [key]: value }
     const controls = getRotations(newCoords)
+
+    if (!isValid(controls)) {
+      return
+    }
 
     for (const value of Object.values(controls)) {
       if (Number.isNaN(value)) {
@@ -85,16 +94,16 @@ const ControlsForm = function ControlsForm() {
       <Field
         name="controls.shoulderRotation"
         component={Slider}
-        min={-50}
-        max={95}
+        min={MIN_SHOULDER_ROTATION}
+        max={MAX_SHOULDER_ROTATION}
         label="B"
         normalize={normalize}
       />
       <Field
         name="controls.elbowRotation"
         component={Slider}
-        min={0}
-        max={120}
+        min={MIN_ELBOW_ROTATION}
+        max={MAX_ELBOW_ROTATION}
         label="C"
         normalize={normalize}
       />
