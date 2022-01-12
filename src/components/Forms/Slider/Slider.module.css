@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.slider {
+  margin-right: 1rem;
+}
+
+.input {
+  width: 40px;
+}
