@@ -4,7 +4,7 @@ import {
   lawOfCosines,
   SHOULDER_HEIGHT,
   BALL_RADIUS,
-  DEFAULT_POSITION,
+  DEFAULT_STATE,
   FIRST_SEGMENT_LENGTH,
   SECOND_SEGMENT_LENGTH,
 } from '../kinematics'
@@ -25,7 +25,7 @@ describe('lawOfCosines', () => {
 describe('getPosition', () => {
   test('horizontal in -x direction', () => {
     const rotations = {
-      ...DEFAULT_POSITION,
+      ...DEFAULT_STATE,
       shoulderRotation: 90,
       baseRotation: 180,
     }
@@ -40,9 +40,9 @@ describe('getPosition', () => {
 
 describe('getRotations', () => {
   test('vertical', () => {
-    const position = getPosition(DEFAULT_POSITION)
+    const position = getPosition(DEFAULT_STATE)
     const rotations = getRotations(position)
-    expect(rotations).toEqual(DEFAULT_POSITION)
+    expect(rotations).toEqual(DEFAULT_STATE)
   })
 
   describe('horizontal', () => {
@@ -54,6 +54,7 @@ describe('getRotations', () => {
       }
 
       expect(getRotations(position)).toEqual({
+        ...DEFAULT_STATE,
         shoulderRotation: 90,
         elbowRotation: 0,
         baseRotation: 0,
@@ -68,6 +69,7 @@ describe('getRotations', () => {
       }
 
       expect(getRotations(position)).toEqual({
+        ...DEFAULT_STATE,
         shoulderRotation: 90,
         elbowRotation: 0,
         baseRotation: 90,
@@ -82,6 +84,7 @@ describe('getRotations', () => {
       }
 
       expect(getRotations(position)).toEqual({
+        ...DEFAULT_STATE,
         shoulderRotation: 90,
         elbowRotation: 0,
         baseRotation: 180,
@@ -96,6 +99,7 @@ describe('getRotations', () => {
       }
 
       expect(getRotations(position)).toEqual({
+        ...DEFAULT_STATE,
         shoulderRotation: 90,
         elbowRotation: 0,
         baseRotation: 270,

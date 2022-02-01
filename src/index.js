@@ -7,13 +7,17 @@ import store from './redux-store'
 import { initializeReact } from './react'
 import { getControlValues } from './utils/redux'
 import { addBalls } from './balls'
+import { loadModels } from './model-loader'
+//import './prism'
+
 import './styles.css'
 
 const BOX_SIZE = 1
 
 const getCameraFactor = () => (5 * BOX_SIZE) / window.innerHeight
 
-const setup = () => {
+const setup = async () => {
+  const models = await loadModels()
   const scene = new Three.Scene()
   scene.background = new Three.Color('#a99')
 
@@ -91,10 +95,10 @@ const setup = () => {
   orthoCamera.position.y = (10 * BOX_SIZE) / Math.sqrt(3)
 
   const physics = new AmmoPhysics(scene)
-  //physics.debug.enable(true)
+  physics.debug.enable(true)
 
   // Setup Geometry
-  const arm = new Arm(BOX_SIZE)
+  const arm = new Arm(BOX_SIZE, models)
   arm.addToScene(scene, physics)
 
   const ground = physics.add.ground({

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { reduxForm, Field, formValueSelector, change } from 'redux-form'
 
 import {
-  DEFAULT_POSITION,
+  DEFAULT_STATE,
   MIN_SHOULDER_ROTATION,
   MAX_SHOULDER_ROTATION,
   MIN_ELBOW_ROTATION,
@@ -119,7 +119,7 @@ const Form = reduxForm({
 
 export default function Controls() {
   const initialValues = {
-    controls: DEFAULT_POSITION,
+    controls: DEFAULT_STATE,
   }
 
   return (

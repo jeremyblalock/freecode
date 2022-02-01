@@ -1,4 +1,5 @@
 import * as Three from 'three'
+import flatten from 'lodash/flatten'
 
 import { DEGREES } from './utils/geometry'
 
@@ -10,13 +11,58 @@ import {
   SECOND_SEGMENT_LENGTH,
   JOINT_SIZE,
   SHOULDER_HEIGHT,
-  BALL_RADIUS,
 } from './utils/kinematics'
 
 export default class Arm {
-  constructor(size) {
+  constructor(size, models) {
     this._size = size
+    this._models = models
     this.setupShapes()
+  }
+
+  setupHand(material) {
+    //const finger1 =
+    const size = this._size
+    const scale = size * 0.4
+
+    const { hand, claw } = this._models
+    const mesh = hand.scene.children[0]
+    mesh.material = material
+    const innerGroup = new Three.Group()
+    innerGroup.add(mesh)
+    innerGroup.scale.set(scale, scale, scale)
+    innerGroup.position.y = 0.2 * size
+    innerGroup.rotation.z = -90 * DEGREES
+    mesh.castShadow = true
+
+    // Claw
+    const clawMesh = claw.scene.children[0]
+    clawMesh.material = material
+    clawMesh.castShadow = true
+    const clawGroup = new Three.Group()
+    clawGroup.add(clawMesh)
+    clawGroup.rotation.z = -90 * DEGREES
+    clawGroup.scale.set(scale, scale, scale)
+    clawGroup.position.y = 0.25 * size
+
+    const secondClaw = clawGroup.clone()
+    secondClaw.rotation.y = 180 * DEGREES
+    const secondClawGroup = new Three.Group()
+    secondClawGroup.add(secondClaw)
+
+    const group = new Three.Group()
+    group.add(innerGroup)
+    group.add(clawGroup)
+    group.add(secondClawGroup)
+
+    return {
+      hand: group,
+      finger1: clawGroup,
+      finger2: secondClawGroup,
+      finger1Mesh: clawMesh,
+      finger2Mesh: secondClaw,
+      handMesh: innerGroup,
+    }
   }
 
   setupShapes = () => {
@@ -75,17 +121,21 @@ export default class Arm {
     cube2.position.y = 0.5 * SECOND_SEGMENT_LENGTH * size
     cube2.castShadow = true
 
-    const ballGeom = new Three.SphereGeometry(BALL_RADIUS * size, 16, 8)
-    const ball = new Three.Mesh(ballGeom, material)
-    ball.position.y = SECOND_SEGMENT_LENGTH * size
-    ball.castShadow = true
+    const { hand, finger1Mesh, finger2Mesh, handMesh } =
+      this.setupHand(material)
+
+    hand.castShadow = true
+    hand.position.y = SECOND_SEGMENT_LENGTH * size
 
     const elbow = this.createJoint(size, material)
 
+    const cube2Inner = new Three.Group()
+    cube2Inner.add(cube2)
+    cube2Inner.add(elbow)
+
     const cube2Wrapper = new Three.Group()
-    cube2Wrapper.add(cube2)
-    cube2Wrapper.add(elbow)
-    cube2Wrapper.add(ball)
+    cube2Wrapper.add(cube2Inner)
+    cube2Wrapper.add(hand)
     cube2Wrapper.position.y = FIRST_SEGMENT_LENGTH * size
 
     const group = new Three.Group()
@@ -102,7 +152,10 @@ export default class Arm {
     this._physicsShapes = {
       base,
       cube,
-      cube2: cube2Wrapper,
+      cube2: cube2Inner,
+      finger1: finger1Mesh,
+      finger2: finger2Mesh,
+      handMesh,
     }
 
     this._hierarchicalShapes = {
@@ -135,9 +188,15 @@ export default class Arm {
     this._scene = scene
     this._physics = physics
 
-    for (const item of Object.values(this._physicsShapes)) {
-      physics.add.existing(item)
-      item.body.setCollisionFlags(KINEMATIC)
+    for (const key of Object.keys(this._physicsShapes)) {
+      const item = this._physicsShapes[key]
+      const options = { collisionFlags: KINEMATIC }
+
+      if (key.match(/^(finger|hand)/)) {
+        options.shape = 'hacd'
+      }
+
+      physics.add.existing(item, options)
     }
   }
 
@@ -152,9 +211,9 @@ export default class Arm {
     wrapper.rotation.set(0, baseRotation * DEGREES, 0)
     group.rotation.set(0, 0, normalizedShoulder * DEGREES)
 
-    this._physicsShapes.cube2.body.needUpdate = true
-    this._physicsShapes.cube.body.needUpdate = true
-    this._physicsShapes.base.body.needUpdate = true
+    for (const shape of Object.values(this._physicsShapes)) {
+      shape.body.needUpdate = true
+    }
   }
 
   loop(delta) {

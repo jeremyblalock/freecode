@@ -1,9 +1,12 @@
 import { DEGREES, toCart } from './geometry'
 
-export const DEFAULT_POSITION = {
+export const DEFAULT_STATE = {
   baseRotation: 0,
   shoulderRotation: 0,
   elbowRotation: 0,
+  forearmRotation: 0,
+  wristRotation: 0,
+  handRotation: 0,
 }
 
 // Collision flags
@@ -20,6 +23,7 @@ export const JOINT_SIZE = 0.5
 export const SHOULDER_HEIGHT = BASE_HEIGHT * 2 + JOINT_SIZE / 2
 
 export const BALL_RADIUS = 0.4
+export const HAND_SIZE = 0.8
 
 export const MIN_SHOULDER_ROTATION = -45
 export const MAX_SHOULDER_ROTATION = 95
@@ -77,7 +81,7 @@ export const lawOfCosines = (a, b, c) => {
   return Math.acos((a ** 2 + b ** 2 - c ** 2) / (2 * a * b)) / DEGREES
 }
 
-export const getRotations = position => {
+export const getRotations = (position, approach) => {
   let { x, y, z } = position
   x = +x
   y = +y - SHOULDER_HEIGHT + BALL_RADIUS
@@ -104,5 +108,8 @@ export const getRotations = position => {
     baseRotation,
     elbowRotation,
     shoulderRotation,
+    forearmRotation: 0,
+    wristRotation: 0,
+    handRotation: 0,
   }
 }
