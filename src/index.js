@@ -6,6 +6,7 @@ import Arm from './arm'
 import store from './redux-store'
 import { initializeReact } from './react'
 import { getControlValues } from './utils/redux'
+import { DEGREES } from './utils/geometry'
 import { addBalls } from './balls'
 import { loadModels } from './model-loader'
 //import './prism'
@@ -109,6 +110,42 @@ const setup = async () => {
 
   ground.body.setCollisionFlags(1)
   ground.visible = false
+
+  const edges = new Three.Group()
+
+  const edge = new Three.Mesh(
+    new Three.BoxGeometry(10 * BOX_SIZE, 10 * BOX_SIZE, 1 * BOX_SIZE),
+    new Three.MeshLambertMaterial({ color: '#aaa', side: Three.DoubleSide })
+  )
+
+  edge.rotation.z = 90 * DEGREES
+  edge.position.z = -5 * BOX_SIZE
+
+  edge.updateMatrix()
+
+  const backWall = new Three.Group()
+  backWall.add(edge)
+
+  const leftWall = backWall.clone()
+  leftWall.rotation.y = 90 * DEGREES
+
+  const frontWall = backWall.clone()
+  frontWall.rotation.y = 180 * DEGREES
+
+  const rightWall = backWall.clone()
+  rightWall.rotation.y = -90 * DEGREES
+
+  edges.add(backWall)
+  edges.add(leftWall)
+  edges.add(frontWall)
+  edges.add(rightWall)
+
+  //scene.add(edges)
+
+  physics.add.existing(leftWall.children[0], { collisionFlags: 1 })
+  physics.add.existing(rightWall.children[0], { collisionFlags: 1 })
+  physics.add.existing(backWall.children[0], { collisionFlags: 1 })
+  physics.add.existing(frontWall.children[0], { collisionFlags: 1 })
 
   // Add plane (for shadows)
   const planeGeo = new Three.PlaneGeometry(100 * BOX_SIZE, 100 * BOX_SIZE)

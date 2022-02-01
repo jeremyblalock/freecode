@@ -35,7 +35,7 @@ export const addBalls = ({
     mesh.position.y = 10
     mesh.castShadow = true
 
-    physics.add.existing(mesh)
+    physics.add.existing(mesh, { bounciness: 1 })
     scene.add(mesh)
   }
 }
