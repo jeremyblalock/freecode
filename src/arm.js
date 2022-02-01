@@ -31,7 +31,7 @@ export default class Arm {
     const innerGroup = new Three.Group()
     innerGroup.add(mesh)
     innerGroup.scale.set(scale, scale, scale)
-    innerGroup.position.y = 0.2 * size
+    innerGroup.position.y = 0.05 * size
     innerGroup.rotation.z = -90 * DEGREES
     mesh.castShadow = true
 
@@ -43,7 +43,7 @@ export default class Arm {
     clawGroup.add(clawMesh)
     clawGroup.rotation.z = -90 * DEGREES
     clawGroup.scale.set(scale, scale, scale)
-    clawGroup.position.y = 0.25 * size
+    clawGroup.position.y = 0.35 * size
 
     const secondClaw = clawGroup.clone()
     secondClaw.rotation.y = 180 * DEGREES
