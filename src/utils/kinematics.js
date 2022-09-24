@@ -114,3 +114,21 @@ export const getRotations = (position, approach) => {
     handRotation: 0,
   }
 }
+
+export const getPolar = rotations => {
+  const { x, y, z } = getPosition(rotations)
+  const { baseRotation: theta } = rotations
+  const r = Math.sqrt(x ** 2 + z ** 2)
+
+  return { theta, r, y }
+}
+
+export const getRotationsFromPolar = polar => {
+  const { theta, r, y } = polar
+  const x = r * Math.sin(theta / DEGREES)
+  const z = r * Math.cos(theta / DEGREES)
+
+  const rotations = getRotations({ x, y, z })
+
+  return { ...rotations, baseRotation: theta }
+}

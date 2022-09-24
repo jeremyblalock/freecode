@@ -11,6 +11,8 @@ import {
   MAX_ELBOW_ROTATION,
   getPosition,
   getRotations,
+  getPolar,
+  getRotationsFromPolar,
   isValid,
 } from '../../utils/kinematics'
 
@@ -28,18 +30,26 @@ const normalize = (value, prevValue, allValues) => {
   return value
 }
 
-const CartItem = function CartItem({ coord, value, onChange }) {
+const CartItem = function CartItem({
+  coord,
+  value,
+  onChange,
+  label,
+  min = null,
+  max = null,
+  step = 0.01,
+}) {
   const handleChange = value => {
     onChange(coord, value)
   }
 
   return (
     <Slider
-      label={coord.toUpperCase()}
+      label={label || coord.toUpperCase()}
       input={{ value, onChange: handleChange }}
-      min={coord === 'y' ? 0 : -3.45}
-      max={3.45}
-      step={0.01}
+      min={min === null ? (coord === 'y' ? 0 : -3.45) : min}
+      max={max === null ? 3.45 : max}
+      step={step}
     />
   )
 }
@@ -75,6 +85,49 @@ const Cartesian = function Cartesian() {
       <CartItem coord="x" onChange={handleChange} value={cartesian.x} />
       <CartItem coord="y" onChange={handleChange} value={cartesian.y} />
       <CartItem coord="z" onChange={handleChange} value={cartesian.z} />
+    </div>
+  )
+}
+
+const Polar = function Polar() {
+  const dispatch = useDispatch()
+  const selector = formValueSelector(CONTROLS_FORM)
+  const angular = useSelector(state => selector(state, 'controls'))
+  const polar = getPolar(angular)
+
+  const handleChange = (key, value) => {
+    const newPolar = { ...polar, [key]: value }
+    const controls = getRotationsFromPolar(newPolar)
+
+    if (!isValid(controls)) {
+      return
+    }
+
+    for (const value of Object.values(controls)) {
+      if (Number.isNaN(value)) {
+        console.log('>>>>>', controls, polar)
+
+        return
+      }
+    }
+
+    dispatch(change(CONTROLS_FORM, 'controls', { ...angular, ...controls }))
+  }
+
+  return (
+    <div>
+      <h2>Polar</h2>
+      <CartItem
+        coord="theta"
+        onChange={handleChange}
+        value={polar.theta}
+        label="ϴ"
+        min={0}
+        max={360}
+        step={1}
+      />
+      <CartItem coord="r" onChange={handleChange} value={polar.r} />
+      <CartItem coord="y" onChange={handleChange} value={polar.y} />
     </div>
   )
 }
@@ -125,6 +178,8 @@ const ControlsForm = function ControlsForm() {
       />
       <hr />
       <Cartesian />
+      <hr />
+      <Polar />
     </div>
   )
 }
