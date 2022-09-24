@@ -66,7 +66,7 @@ const Cartesian = function Cartesian() {
       }
     }
 
-    dispatch(change(CONTROLS_FORM, 'controls', controls))
+    dispatch(change(CONTROLS_FORM, 'controls', { ...angular, ...controls }))
   }
 
   return (

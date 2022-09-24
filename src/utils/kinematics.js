@@ -6,6 +6,7 @@ export const DEFAULT_STATE = {
   elbowRotation: 0,
   forearmRotation: 0,
   wristRotation: 0,
+  claw: 0,
   handRotation: 0,
 }
 
