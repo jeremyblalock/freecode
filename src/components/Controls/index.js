@@ -107,6 +107,22 @@ const ControlsForm = function ControlsForm() {
         label="C"
         normalize={normalize}
       />
+      <Field
+        name="controls.wristRotation"
+        component={Slider}
+        min={-80}
+        max={90}
+        label="D"
+        normalize={normalize}
+      />
+      <Field
+        name="controls.claw"
+        component={Slider}
+        min={0}
+        max={100}
+        label="E"
+        normalize={normalize}
+      />
       <hr />
       <Cartesian />
     </div>

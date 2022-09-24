@@ -1,5 +1,4 @@
 import * as Three from 'three'
-import flatten from 'lodash/flatten'
 
 import { DEGREES } from './utils/geometry'
 
@@ -21,7 +20,6 @@ export default class Arm {
   }
 
   setupHand(material) {
-    //const finger1 =
     const size = this._size
     const scale = size * 0.4
 
@@ -44,6 +42,8 @@ export default class Arm {
     clawGroup.rotation.z = -90 * DEGREES
     clawGroup.scale.set(scale, scale, scale)
     clawGroup.position.y = 0.35 * size
+    const clawGroupWrapper = new Three.Group()
+    clawGroupWrapper.add(clawGroup)
 
     const secondClaw = clawGroup.clone()
     secondClaw.rotation.y = 180 * DEGREES
@@ -52,12 +52,12 @@ export default class Arm {
 
     const group = new Three.Group()
     group.add(innerGroup)
-    group.add(clawGroup)
+    group.add(clawGroupWrapper)
     group.add(secondClawGroup)
 
     return {
       hand: group,
-      finger1: clawGroup,
+      finger1: clawGroupWrapper,
       finger2: secondClawGroup,
       finger1Mesh: clawMesh,
       finger2Mesh: secondClaw,
@@ -121,7 +121,7 @@ export default class Arm {
     cube2.position.y = 0.5 * SECOND_SEGMENT_LENGTH * size
     cube2.castShadow = true
 
-    const { hand, finger1Mesh, finger2Mesh, handMesh } =
+    const { hand, finger1, finger2, finger1Mesh, finger2Mesh, handMesh } =
       this.setupHand(material)
 
     hand.castShadow = true
@@ -163,6 +163,9 @@ export default class Arm {
       group,
       wrapper,
       cube2: cube2Wrapper,
+      hand,
+      finger1,
+      finger2,
     }
 
     this._wrapper = wrapper
@@ -202,14 +205,29 @@ export default class Arm {
 
   setPosition(position) {
     this._position = position
-    const { cube2, group, wrapper } = this._hierarchicalShapes
-    const { elbowRotation, shoulderRotation, baseRotation } = position
+
+    const { cube2, group, wrapper, hand, finger1, finger2 } =
+      this._hierarchicalShapes
+
+    const {
+      elbowRotation,
+      shoulderRotation,
+      baseRotation,
+      wristRotation,
+      claw,
+    } = position
+
     const normalizedElbow = Math.min(130, Math.max(0, elbowRotation))
     const normalizedShoulder = Math.min(95, Math.max(-50, shoulderRotation))
+
+    const clawRotation = 10 + 0.5 * (claw || 0)
 
     cube2.rotation.set(0, 0, normalizedElbow * DEGREES)
     wrapper.rotation.set(0, baseRotation * DEGREES, 0)
     group.rotation.set(0, 0, normalizedShoulder * DEGREES)
+    hand.rotation.set(0, 0, wristRotation * DEGREES)
+    finger1.rotation.set(-clawRotation * DEGREES, 0, 0)
+    finger2.rotation.set(clawRotation * DEGREES, 0, 0)
 
     for (const shape of Object.values(this._physicsShapes)) {
       shape.body.needUpdate = true

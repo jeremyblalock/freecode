@@ -182,6 +182,8 @@ const setup = async () => {
 
   const clock = new Three.Clock()
 
+  let active = true
+
   const loop = () => {
     const delta = clock.getDelta()
 
@@ -195,8 +197,20 @@ const setup = async () => {
 
     // Re-render
     renderer.render(scene, orthoCamera)
-    requestAnimationFrame(loop)
+
+    if (active) {
+      requestAnimationFrame(loop)
+    }
   }
+
+  window.addEventListener('blur', () => {
+    active = false
+  })
+
+  window.addEventListener('focus', () => {
+    active = true
+    loop()
+  })
 
   loop()
 }
